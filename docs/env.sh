@@ -1,0 +1,1 @@
+export MONGODB_URI="mongodb+srv://tsha888:Pvl750@cluster0-cbmdh.mongodb.net/doc?retryWrites=true&w=majority"
