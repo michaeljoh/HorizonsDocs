@@ -1,7 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var User = require('../models/User');
+var {User} = require('../models/models');
 
 router.use(function(req, res, next) {
   if (!req.user) {

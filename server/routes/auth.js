@@ -1,14 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var User = require('../models/User.js');
+const {User} = require('../models/models.js');
 
 module.exports = function(passport) {
   // Add Passport-related auth routes here, to the router!
 
   // GET Login page
   router.get('/login', function(req, res) {
-    res.render('login');
+    res.send('login');
   });
 
   // POST Login page
@@ -26,7 +26,7 @@ module.exports = function(passport) {
   });
 
   // POST registration page
-  var validateReq = function(userData) {
+  const validateReq = function(userData) {
     if (userData.password !== userData.passwordRepeat) {
       return "Passwords don't match.";
     }
@@ -48,7 +48,7 @@ module.exports = function(passport) {
         error: error
       });
     }
-    var u = new User({
+    let u = new User({
       username: req.body.username,
       password: req.body.password
     });
