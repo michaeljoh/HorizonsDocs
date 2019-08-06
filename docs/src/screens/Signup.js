@@ -38,17 +38,40 @@ class Signup extends Component {
         };
     }
 
-    handleSubmit = e => {
+    handleSubmit = async e => {
         e.preventDefault();
 
         if (formValid(this.state)) {
             console.log(`
-        --SUBMITTING--
+        --SUBMITTING as NEW USER--
         First Name: ${this.state.firstName}
         Last Name: ${this.state.lastName}
         Email: ${this.state.email}
         Password: ${this.state.password}
       `);
+
+            let data = {
+                email: this.state.email,
+                password: this.state.password,
+                name: {
+                    first: this.state.firstName,
+                    last: this.state.lastName
+                }
+            }
+
+            // HANDLE SIGNUP FETCH
+            const response = await fetch("http://localhost:8080/signup", {
+                method: "POST",
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+
+            console.log("FETCHED!!", await response.text())
+
+
         } else {
             console.error("FORM INVALID - DISPLAY ERROR MESSAGE");
         }

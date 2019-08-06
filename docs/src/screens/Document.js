@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import "./document.css"
 import { Editor, EditorState, Modifier, RichUtils } from 'draft-js';
+import { BrowserRouter as Router, Redirect } from "react-router-dom";
+
 
 const COLOURS = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"]
 const INLINE_STYLES = ["Bold", "Italic", "Underline"];
@@ -115,9 +117,18 @@ class Document extends React.Component {
         super(props);
         this.state = {
             editorState: EditorState.createEmpty(),
+            authenticated: true
         };
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState) => this.setState({ editorState });
+    }
+
+    // CHANGE TO FETCH
+    componentDidMount() {
+        const response = { redirect: "/login" };
+        if (response.redirect) {
+            this.setState({ authenticated: false })
+        }
     }
 
     // Style click handler
@@ -167,40 +178,43 @@ class Document extends React.Component {
 
 
 
-handleKeyCommand(command, editorState) {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-        this.onChange(newState);
-        return 'handled';
+    handleKeyCommand(command, editorState) {
+        const newState = RichUtils.handleKeyCommand(editorState, command);
+        if (newState) {
+            this.onChange(newState);
+            return 'handled';
+        }
+        return 'not-handled';
     }
-    return 'not-handled';
-}
 
-render() {
-    return (
-        <div className="container">
-            Hello
+    render() {
+        if (!this.state.authenticated) {
+            return <Redirect to="/login" />
+        }
+        return (
+            <div className="container">
+                Hello
                 <div className="editor">
-                <InlineButtons
-                    editorState={this.state.editorState}
-                    onToggle={this.changeStyleClick.bind(this)}
-                />
-                <BlockButtons
-                    editorState={this.state.editorState}
-                    onToggle={this.changeBlockClick.bind(this)}
-                />
-                <ColorButtons
-                    editorState={this.state.editorState}
-                    onToggle={this.changeColorClick.bind(this)}
+                    <InlineButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeStyleClick.bind(this)}
                     />
-                <Editor
-                    editorState={this.state.editorState}
-                    customStyleMap={styleMap}
-                    handleKeyCommand={this.handleKeyCommand.bind(this)}
-                    onChange={this.onChange}
-                />
+                    <BlockButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeBlockClick.bind(this)}
+                    />
+                    <ColorButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeColorClick.bind(this)}
+                    />
+                    <Editor
+                        editorState={this.state.editorState}
+                        customStyleMap={styleMap}
+                        handleKeyCommand={this.handleKeyCommand.bind(this)}
+                        onChange={this.onChange}
+                    />
+                </div>
             </div>
-        </div>
         );
     }
 }

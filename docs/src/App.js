@@ -1,4 +1,4 @@
-import {Portal, Document, Signup} from "./screens";
+import { Portal, Document, Signup, Login } from "./screens";
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import "./App.css";
@@ -11,7 +11,9 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Route path="/" render={() => <Signup></Signup>}></Route>
+        <Route exact path="/signup" render={() => <Signup></Signup>}></Route>
+        <Route path="/login" render={() => <Login></Login>}></Route>
+        <Route path="/document" render={() => <Document></Document>}></Route>
       </Router>
     );
   }
