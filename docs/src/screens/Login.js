@@ -26,7 +26,7 @@ class Login extends Component {
             password: this.state.password,
         }
 
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch(process.env.CONNECTION_URL + "/login", {
             method: "POST",
             credentials: 'same-origin',
             headers: {
