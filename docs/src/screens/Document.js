@@ -120,15 +120,17 @@ class Document extends React.Component {
             authenticated: true
         };
         this.focus = () => this.refs.editor.focus();
-        this.onChange = (editorState) => this.setState({ editorState });
+        this.onChange = (editorState) => {
+            this.setState({ editorState });
+        };
     }
 
     // CHANGE TO FETCH
     componentDidMount() {
-        const response = { redirect: "/login" };
-        if (response.redirect) {
-            this.setState({ authenticated: false })
-        }
+        // const response = { redirect: "/login" };
+        // if (response.redirect) {
+        //     this.setState({ authenticated: false })
+        // }
     }
 
     // Style click handler
@@ -176,8 +178,6 @@ class Document extends React.Component {
         this.onChange(nextEditorState);
     }
 
-
-
     handleKeyCommand(command, editorState) {
         const newState = RichUtils.handleKeyCommand(editorState, command);
         if (newState) {
@@ -187,13 +187,28 @@ class Document extends React.Component {
         return 'not-handled';
     }
 
+    async saveDoc() {
+        const response = await fetch("http://localhost:8080/document/123123", {
+            method: "POST",
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                editorState: this.state.editorState
+            })
+        });
+
+        console.log("DOC SAVED? ", await response.json());
+    }
+
     render() {
         if (!this.state.authenticated) {
             return <Redirect to="/login" />
         }
         return (
             <div className="container">
-                Hello
+                My Document
                 <div className="editor">
                     <InlineButtons
                         editorState={this.state.editorState}
@@ -213,6 +228,7 @@ class Document extends React.Component {
                         handleKeyCommand={this.handleKeyCommand.bind(this)}
                         onChange={this.onChange}
                     />
+                    <button onClick={this.saveDoc.bind(this)}>Save</button>
                 </div>
             </div>
         );
