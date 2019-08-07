@@ -12,8 +12,11 @@ var auth = require('./routes/auth');
 var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 var _ = require('lodash');
+const cors = require("cors")
 
 var app = express();
+
+app.use(cors());
 
 // view engine setup
 app.use(logger('dev'));
@@ -30,9 +33,6 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-// Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Passport Serialize
 passport.serializeUser(function (user, done) {
@@ -46,16 +46,23 @@ passport.deserializeUser(function (id, done) {
 })
 
 // Passport Strategy
-passport.use(new LocalStrategy(function (email, password, done) {
+passport.use(new LocalStrategy({ 
+  usernameField: 'email',    // define the parameter in req.body that passport can use as username and password
+  passwordField: 'password'
+}, function (email, password, done) {
+  console.log("in strategy")
   models.User.findOne({ email: email }, function (err, user) {
     if (err) {
       console.log(err);
       done(err);
     }
     else if (!user) {
+      console.log("NO USER FOUND")
       done(null, false, { message: "incorrect email" });
     }
     else if (user.password !== password) {
+      console.log("PASSWORDS DONT MATCH")
+
       done(null, false, { message: "incorrect password" });
     }
     else {
@@ -63,6 +70,11 @@ passport.use(new LocalStrategy(function (email, password, done) {
     }
   })
 }));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use('/', auth(passport));
 app.use('/', routes);
