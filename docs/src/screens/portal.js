@@ -1,27 +1,40 @@
 import React from "react";
-import  CreateForm  from "../components/create";
+import CreateForm from "../components/create";
+import "../styles/portal.css";
+
 import { Link, BrowserRouter as Router } from "react-router-dom";
 
 function Portal() {
   // TEST dummy data
-  let data = [{ title: "Hello" }, { title: "My" }, { title: "Name" }, { title: "Jeff" }, { title: "Gotti" }];
+  let data = [
+    { title: "Hello" },
+    { title: "My" },
+    { title: "Name" },
+    { title: "Jeff" },
+    { title: "Gotti" }
+  ];
   return (
     <Router>
-      <div>
-        <div> Welcome to the Portal </div>
-        <div> Create a document </div>
-        <CreateForm label="Create Document: " buttonLabel="Create" />
-        <div> My Documents </div>
-        <ul>
-          {data.map(doc => (
-            <li>
-              <Link to={`/${doc.title}`}>{doc.title}</Link>
-            </li>
-          ))}
-        </ul>
-        {/* {data.map(doc => <div>{doc.title}</div>)} */}
-        <div> Add Shared Documents </div>
-        <CreateForm label="Shared Link: " buttonLabel="Add" />
+      <h1> My Documents </h1>
+      <div class="container">
+        <div id="createDoc">
+          <h2> Create a document </h2>
+          <CreateForm label="Create Document: " buttonLabel="Create" />
+        </div>
+        <div>
+          <h2> My Documents </h2>
+          <ul>
+            {data.map(doc => (
+              <li>
+                <Link to={`/${doc.title}`}>{doc.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div id="createDoc">
+          <h2> Add Shared Documents </h2>
+          <CreateForm label="Shared Link: " buttonLabel="Add" />
+        </div>
       </div>
     </Router>
   );
