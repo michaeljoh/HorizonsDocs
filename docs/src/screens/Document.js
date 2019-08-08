@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./document.css"
-import { Editor, EditorState, Modifier, RichUtils } from 'draft-js';
+import { Editor, EditorState, Modifier, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { BrowserRouter as Router, Redirect } from "react-router-dom";
 
 
@@ -117,10 +117,13 @@ class Document extends React.Component {
         super(props);
         this.state = {
             editorState: EditorState.createEmpty(),
-            authenticated: true
+            authenticated: true,
+            redirect: false,
+            redirectTo: null
         };
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState) => {
+            console.log(editorState)
             this.setState({ editorState });
         };
     }
@@ -128,16 +131,24 @@ class Document extends React.Component {
     // Fetch document
     async componentDidMount() {
         //TEST document
-        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + '5d4b1ceeffb10637f0d2b569', {
+        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + '5d4c7866cb887c1198097a99', {
             method: "GET",
             credentials: 'include',
         });
 
         const responseJSON = await data.json();
+
         console.log("Got document: ", responseJSON)
 
         if (responseJSON.notAuthenticated) {
             this.setState({ authenticated: false })
+        } else if (responseJSON.redirect) {
+            // this.setState({
+            //     redirect: true,
+            //     redirectTo: responseJSON.redirect
+            // });
+        } else {
+            // this.setState({ editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(responseJSON.content))) });
         }
     }
 
@@ -196,14 +207,19 @@ class Document extends React.Component {
     }
 
     async saveDoc() {
-        const response = await fetch("http://localhost:8080/document/123123", {
+        const contentState = this.state.editorState.getCurrentContent();
+        const toSave = convertToRaw(contentState);
+        console.log(toSave)
+
+        const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/document/123", {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
+            redirect: "follow",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                editorState: this.state.editorState
+                content: toSave
             })
         });
 
@@ -214,6 +230,8 @@ class Document extends React.Component {
         if (!this.state.authenticated) {
             return <Redirect to="/login" />
         }
+        else if (this.state.redirect)
+            return <Redirect to={this.state.redirectTo} />
         return (
             <div className="container">
                 My Document
