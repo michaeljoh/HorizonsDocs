@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import "../styles/document.css";
-// import "../node_modules/font-awesome/css/font-awesome.min.css";
 import { Editor, EditorState, Modifier, RichUtils } from "draft-js";
 import { BrowserRouter as Router, Redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faUnderline, faBold, faItalic } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUnderline,
+  faBold,
+  faItalic
+} from "@fortawesome/free-solid-svg-icons";
 
-library.add( faUnderline, faBold, faItalic);
+library.add(faUnderline, faBold, faItalic);
 
 const INLINE_STYLES = [
   { style: "Bold", label: <FontAwesomeIcon icon="bold" /> },
-  { style: "Italic", label:<FontAwesomeIcon icon="italic" /> },
+  { style: "Italic", label: <FontAwesomeIcon icon="italic" /> },
   { style: "Underline", label: <FontAwesomeIcon icon="underline" /> }
 ];
 const COLOURS = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"];
@@ -65,7 +68,7 @@ const StyleButton = props => {
 const InlineButtons = props => {
   const currentStyle = props.editorState.getCurrentInlineStyle();
   return (
-    <div className="editor-controls">
+    <div>
       {INLINE_STYLES.map(type => (
         <StyleButton
           key={type.style}
@@ -88,7 +91,7 @@ const BlockButtons = props => {
     .getType();
 
   return (
-    <div className="RichEditor-controls">
+    <div>
       {BLOCK_TYPES.map(type => (
         <StyleButton
           key={type.label}
@@ -195,27 +198,36 @@ class Document extends React.Component {
       return <Redirect to="/login" />;
     }
     return (
-      <div className="container">
-        Hello
-        <div className="editor">
-          <InlineButtons
-            editorState={this.state.editorState}
-            onToggle={this.changeStyleClick.bind(this)}
-          />
-          <BlockButtons
-            editorState={this.state.editorState}
-            onToggle={this.changeBlockClick.bind(this)}
-          />
-          <ColorButtons
-            editorState={this.state.editorState}
-            onToggle={this.changeColorClick.bind(this)}
-          />
+      <div className="documentContainer">
+        <div className="documentBox">
+          <div className="documentEditor">
+            <div className="inlineButtons">
+              <InlineButtons
+                editorState={this.state.editorState}
+                onToggle={this.changeStyleClick.bind(this)}
+              />
+            </div>
+            <div className="blockButtons">
+              <BlockButtons
+                editorState={this.state.editorState}
+                onToggle={this.changeBlockClick.bind(this)}
+              />
+            </div>
+            <div className="colorButtons">
+              <ColorButtons
+                editorState={this.state.editorState}
+                onToggle={this.changeColorClick.bind(this)}
+              />
+            </div>
+          </div>
+          <div className="editor">
           <Editor
             editorState={this.state.editorState}
             customStyleMap={styleMap}
             handleKeyCommand={this.handleKeyCommand.bind(this)}
             onChange={this.onChange}
           />
+          </div>
         </div>
       </div>
     );

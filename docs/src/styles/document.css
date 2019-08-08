@@ -1,16 +1,50 @@
-.container{
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
+.documentContainer {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
 }
 
-.editor{
-    border: 2px solid black;
-    background-color: cyan;
-    max-width: 40vw ;
-    padding: 10px;
+.documentBox {
+  width: 75vw;
+  background-color: lightblue;
+  height: 50vh;
+  margin: auto;
+  margin-top: 5vh;
+  padding: 10px 30px;
 }
 
-.activeStyleButton{
-    background-color: purple;
+.documentEditor {
+  margin-bottom: 10px;
+  width: auto;
+  background-color: white;
+  display: flex;
+  border: solid 1px black;
+  border-radius: 5px;
+  padding-left: 10px
+}
+
+.inlineButtons {
+  width: auto;
+}
+
+.blockButtons {
+  width: auto;
+}
+
+.colorButtons {
+  width: auto;
+}
+
+.editor {
+  width: auto;
+  height: 45vh;
+  border: solid 1px black;
+  border-radius: 5px;
+  padding-left: 10px
+}
+
+.activeStyleButton {
+  background-color: purple;
 }

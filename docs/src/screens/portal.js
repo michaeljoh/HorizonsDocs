@@ -16,7 +16,7 @@ function Portal() {
   return (
     <Router>
       <h1> My Documents </h1>
-      <div class="container">
+      <div class="portalContainer">
         <div id="createDoc">
           <h2> Create a document </h2>
           <CreateForm label="Create Document: " buttonLabel="Create" />
