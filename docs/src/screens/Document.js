@@ -125,12 +125,20 @@ class Document extends React.Component {
         };
     }
 
-    // CHANGE TO FETCH
-    componentDidMount() {
-        // const response = { redirect: "/login" };
-        // if (response.redirect) {
-        //     this.setState({ authenticated: false })
-        // }
+    // Fetch document
+    async componentDidMount() {
+        //TEST document
+        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + '5d4b1ceeffb10637f0d2b569', {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        const responseJSON = await data.json();
+        console.log("Got document: ", responseJSON)
+
+        if (responseJSON.notAuthenticated) {
+            this.setState({ authenticated: false })
+        }
     }
 
     // Style click handler

@@ -28,7 +28,8 @@ class Login extends Component {
         console.log(process.env)
         const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/login", {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
+            redirect: "follow",
             headers: {
                 'Content-Type': 'application/json',
             },
