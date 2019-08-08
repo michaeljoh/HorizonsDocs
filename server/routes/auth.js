@@ -1,69 +1,68 @@
 const express = require('express');
 const router = express.Router();
 
-const {User} = require('../models/models.js');
+const { User } = require('../models/models.js');
 
-module.exports = function(passport) {
+module.exports = function (passport) {
   // Add Passport-related auth routes here, to the router!
-
-  // GET Login page
-  router.get('/login', function(req, res) {
-    res.send('login');
-  });
 
   // POST Login page
   router.post(
     '/login',
-    passport.authenticate('local', {
-      successRedirect: '/contacts',
-      failureRedirect: '/login'
-    })
+    function (req, res, next) {
+      passport.authenticate('local', function (err, user, info) {
+        if (err) { return next(err); }
+        if (!user) { return res.json({ redirect: '/login' }); }
+
+        req.logIn(user, function (err) {
+          if (err) { return next(err); }
+          return res.json({ redirect: '/portal' });
+        });
+      })(req, res, next)
+    }
   );
 
-  // GET registration page
-  router.get('/signup', function(req, res) {
-    res.send('signup');
-  });
-
-  // POST registration page
-  const validateReq = function(userData) {
-    if (userData.password !== userData.passwordRepeat) {
-      return "Passwords don't match.";
-    }
-
-    if (!userData.username) {
+  // Add unique email check
+  const validateReq = async function (userData) {
+    if (!userData.email) {
       return 'Please enter a username.';
     }
-
     if (!userData.password) {
       return 'Please enter a password.';
     }
+
+    const user = await User.findOne({email: userData.email});
+    if (user)
+      return "User already exists";
   };
 
-  router.post('/signup', function(req, res) {
+  // POST registration 
+  router.post('/signup', async function (req, res) {
     // validation step
-    var error = validateReq(req.body);
+    let error = await validateReq(req.body);
     if (error) {
-      return res.render('signup', {
-        error: error
-      });
+      return res.send(`Signup error: ${error}`);
     }
+
     let u = new User({
-      username: req.body.username,
-      password: req.body.password
+      email: req.body.email,
+      password: req.body.password,
+      name: {
+        first: req.body.name.first,
+        last: req.body.name.last
+      }
     });
-    u.save(function(err, user) {
+
+    u.save(function (err, user) {
       if (err) {
-        console.log(err);
-        res.status(500).redirect('/signup');
-        return;
+        res.send('Error signing up');
       }
       console.log('Saved User: ', user);
-      res.redirect('/login');
+      res.send('User successfully created');
     });
   });
 
-  router.get('/logout', function(req, res) {
+  router.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/login');
   });

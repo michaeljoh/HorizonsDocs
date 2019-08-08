@@ -1,7 +1,5 @@
-import React from "react";
-import CreateForm from "../components/create";
-import "../styles/portal.css";
-
+  import React from "react";
+import  CreateForm  from "../components/create";
 import { Link, BrowserRouter as Router } from "react-router-dom";
 
 function Portal() {

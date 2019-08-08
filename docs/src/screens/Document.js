@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import "../styles/document.css";
-import { Editor, EditorState, Modifier, RichUtils } from "draft-js";
+import React, { useState } from 'react';
+import "./document.css"
+import { Editor, EditorState, Modifier, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { BrowserRouter as Router, Redirect } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -167,13 +167,44 @@ class Document extends React.Component {
       "change-inline-style"
     );
 
-    const currentStyle = editorState.getCurrentInlineStyle();
+class Document extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editorState: EditorState.createEmpty(),
+            authenticated: true,
+            redirect: false,
+            redirectTo: null
+        };
+        this.focus = () => this.refs.editor.focus();
+        this.onChange = (editorState) => {
+            console.log(editorState)
+            this.setState({ editorState });
+        };
+    }
 
-    // Unset style override for current color.
-    if (selection.isCollapsed()) {
-      nextEditorState = currentStyle.reduce((state, color) => {
-        return RichUtils.toggleInlineStyle(state, color);
-      }, nextEditorState);
+    // Fetch document
+    async componentDidMount() {
+        //TEST document
+        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + '5d4c7866cb887c1198097a99', {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        const responseJSON = await data.json();
+
+        console.log("Got document: ", responseJSON)
+
+        if (responseJSON.notAuthenticated) {
+            this.setState({ authenticated: false })
+        } else if (responseJSON.redirect) {
+            // this.setState({
+            //     redirect: true,
+            //     redirectTo: responseJSON.redirect
+            // });
+        } else {
+            // this.setState({ editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(responseJSON.content))) });
+        }
     }
 
     // If the color is being toggled on, apply it.
@@ -193,19 +224,65 @@ class Document extends React.Component {
     return "not-handled";
   }
 
-  render() {
-    if (!this.state.authenticated) {
-      return <Redirect to="/login" />;
+    handleKeyCommand(command, editorState) {
+        const newState = RichUtils.handleKeyCommand(editorState, command);
+        if (newState) {
+            this.onChange(newState);
+            return 'handled';
+        }
+        return 'not-handled';
     }
-    return (
-      <div className="documentContainer">
-        <div className="documentBox">
-          <div className="documentEditor">
-            <div className="inlineButtons">
-              <InlineButtons
-                editorState={this.state.editorState}
-                onToggle={this.changeStyleClick.bind(this)}
-              />
+
+    async saveDoc() {
+        const contentState = this.state.editorState.getCurrentContent();
+        const toSave = convertToRaw(contentState);
+        console.log(toSave)
+
+        const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/document/123", {
+            method: "POST",
+            credentials: 'include',
+            redirect: "follow",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: toSave
+            })
+        });
+
+        console.log("DOC SAVED? ", await response.json());
+    }
+
+    render() {
+        if (!this.state.authenticated) {
+            return <Redirect to="/login" />
+        }
+        else if (this.state.redirect)
+            return <Redirect to={this.state.redirectTo} />
+        return (
+            <div className="container">
+                My Document
+                <div className="editor">
+                    <InlineButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeStyleClick.bind(this)}
+                    />
+                    <BlockButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeBlockClick.bind(this)}
+                    />
+                    <ColorButtons
+                        editorState={this.state.editorState}
+                        onToggle={this.changeColorClick.bind(this)}
+                    />
+                    <Editor
+                        editorState={this.state.editorState}
+                        customStyleMap={styleMap}
+                        handleKeyCommand={this.handleKeyCommand.bind(this)}
+                        onChange={this.onChange}
+                    />
+                    <button onClick={this.saveDoc.bind(this)}>Save</button>
+                </div>
             </div>
             <div className="blockButtons">
               <BlockButtons

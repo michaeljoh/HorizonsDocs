@@ -61,7 +61,7 @@ class Signup extends Component {
             }
 
             // HANDLE SIGNUP FETCH
-            const response = await fetch("http://localhost:8080/signup", {
+            const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/signup", {
                 method: "POST",
                 credentials: 'same-origin',
                 headers: {
