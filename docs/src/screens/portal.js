@@ -43,20 +43,22 @@ class Portal extends React.Component {
 
   render() {
     return (
-      <div>
-        <div> Welcome to the Portal </div>
-        <div> Create a document </div>
-        <CreateForm clickHandler={this.createNewDoc} label="Create Document: " buttonLabel="Create" />
-        <div> My Documents </div>
-        <ul>
-          {!this.state.docs ? "LOADING" : this.state.docs.map(doc => (
-            <li>
-              <Link to={`/document/${doc._id}`}>{doc.title}</Link>
-            </li>
-          ))}
-        </ul>
-        <div> Add Shared Documents </div>
-        <CreateForm label="Shared Link: " buttonLabel="Add" />
+      <div className="wrapper">
+        <div className="form-larger">
+          <h1> Welcome to the Portal </h1>
+          <div> Create a document </div>
+          <CreateForm clickHandler={this.createNewDoc} label="Create Document: " buttonLabel="Create" />
+          <div> My Documents </div>
+          <ul>
+            {!this.state.docs ? "LOADING" : this.state.docs.map(doc => (
+              <li>
+                <Link to={`/document/${doc._id}`}>{doc.title}</Link>
+              </li>
+            ))}
+          </ul>
+          <div> Add Shared Documents </div>
+          <CreateForm label="Shared Link: " buttonLabel="Add" />
+        </div>
       </div>
     );
   }
