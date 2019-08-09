@@ -7,22 +7,31 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faUnderline,
   faBold,
-  faItalic
+  faItalic,
+  faListUl,
+  faListOl
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faUnderline, faBold, faItalic);
+library.add(faUnderline, faBold, faItalic,faListUl,faListOl);
 
 const INLINE_STYLES = [
-  { style: "Bold", label: <FontAwesomeIcon icon="bold" /> },
-  { style: "Italic", label: <FontAwesomeIcon icon="italic" /> },
-  { style: "Underline", label: <FontAwesomeIcon icon="underline" /> }
+  { label: <FontAwesomeIcon icon="bold" />, style: "Bold" },
+  { label: <FontAwesomeIcon icon="italic" />, style: "Italic" },
+  { label: <FontAwesomeIcon icon="underline" />, style: "Underline" }
 ];
-const COLOURS = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"];
+const COLOURS = [
+  { label: "RED", style: "Red" },
+  { label: "ORANGE", style: "Orange" },
+  { label: "YELLOW", style: "Yellow" },
+  { label: "GREEN", style: "Green" },
+  { label: "BLUE", style: "Blue" },
+  { label: "PURPLE", style: "Purple" }
+];
 const BLOCK_TYPES = [
-  { label: "Blockquote", style: "blockquote" },
-  { label: "UL", style: "unordered-list-item" },
-  { label: "OL", style: "ordered-list-item" },
-  { label: "Code Block", style: "code-block" }
+  { label: <FontAwesomeIcon icon="list-ul" />, style: "unordered-list-item" },
+  { label: <FontAwesomeIcon icon="list-ol" />, style: "ordered-list-item" },
+  { label: "Code Block", style: "code-block" },
+  { label: "Blockquote", style: "blockquote" }
 ];
 
 // Stylemap
@@ -59,7 +68,7 @@ const StyleButton = props => {
   }
 
   return (
-    <button className={"className"} onMouseDown={onToggle}>
+    <button style={{color: props.style, borderRadius: 5}} className={className} onMouseDown={onToggle}>
       {props.label}
     </button>
   );
@@ -111,10 +120,10 @@ const ColorButtons = props => {
     <div>
       {COLOURS.map(type => (
         <StyleButton
-          active={currentStyle.has(type)}
-          label={type}
+          active={currentStyle.has(type.style.toUpperCase())}
+          label={type.label}
           onToggle={props.onToggle}
-          style={type.toUpperCase()}
+          style={type.style.toUpperCase()}
         />
       ))}
     </div>
@@ -199,21 +208,22 @@ class Document extends React.Component {
     }
     return (
       <div className="documentContainer">
+        <h1 className="heading">MY DOCUMENT</h1>
         <div className="documentBox">
           <div className="documentEditor">
-            <div className="inlineButtons">
+            <div className="buttons">
               <InlineButtons
                 editorState={this.state.editorState}
                 onToggle={this.changeStyleClick.bind(this)}
               />
             </div>
-            <div className="blockButtons">
+            <div className="buttons">
               <BlockButtons
                 editorState={this.state.editorState}
                 onToggle={this.changeBlockClick.bind(this)}
               />
             </div>
-            <div className="colorButtons">
+            <div className="buttons">
               <ColorButtons
                 editorState={this.state.editorState}
                 onToggle={this.changeColorClick.bind(this)}
@@ -221,12 +231,12 @@ class Document extends React.Component {
             </div>
           </div>
           <div className="editor">
-          <Editor
-            editorState={this.state.editorState}
-            customStyleMap={styleMap}
-            handleKeyCommand={this.handleKeyCommand.bind(this)}
-            onChange={this.onChange}
-          />
+            <Editor
+              editorState={this.state.editorState}
+              customStyleMap={styleMap}
+              handleKeyCommand={this.handleKeyCommand.bind(this)}
+              onChange={this.onChange}
+            />
           </div>
         </div>
       </div>

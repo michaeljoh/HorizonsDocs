@@ -9,7 +9,7 @@
 .jello {
   font-family: "Courier New", Courier, monospace;
   font-size: 20px;
-  background-color: aqua
+  /* background-color: aqua */
 }
 
 .inputBox {
@@ -20,9 +20,9 @@
 
 .inputLine {
     display: inline;
-    background-color: aquamarine
+    /* background-color: aquamarine */
 }
-
+/* 
 #createDoc {
     background-color: red;
-}
+} */

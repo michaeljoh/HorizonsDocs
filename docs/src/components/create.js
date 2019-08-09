@@ -16,7 +16,7 @@ class CreateForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.props.history.push(`/${this.state.value}`);
+    this.props.history.push(`/document/${this.state.value}`);
   }
 
   render() {
