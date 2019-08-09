@@ -40,7 +40,9 @@ class CreateForm extends React.Component {
           value={this.props.buttonLabel}
           to={`/${this.state.value}`}
         >
-          Create
+          <div class="createButton">
+            <button type="primary" style={{height: 35, width: 60}}>Create</button>
+          </div>
         </Link>
       </form>
     );

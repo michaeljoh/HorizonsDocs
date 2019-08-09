@@ -49,7 +49,7 @@ class Portal extends React.Component {
           <div> Create a document </div>
           <CreateForm clickHandler={this.createNewDoc} label="Create Document: " buttonLabel="Create" />
           <div> My Documents </div>
-          <ul>
+          <ul class="nobull">
             {!this.state.docs ? "LOADING" : this.state.docs.map(doc => (
               <li>
                 <Link to={`/document/${doc._id}`}>{doc.title}</Link>
