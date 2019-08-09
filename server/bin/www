@@ -7,12 +7,14 @@
 var app = require('../app');
 var debug = require('debug')('docs:server');
 var http = require('http');
+const socket = require("../socket.js")
+
 
 /**
  * Get port from environment and store in Express.
  */
 
- // CHANGE PORT HERE
+// CHANGE PORT HERE
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
@@ -22,6 +24,9 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+// Set up socket io
+var io = require('socket.io')(server);
+socket(io);
 /**
  * Listen on provided port, on all network interfaces.
  */

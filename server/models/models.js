@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  name:{
+  name: {
     first: {
       type: String,
       required: true
@@ -30,14 +30,19 @@ const userSchema = new mongoose.Schema({
 });
 
 const documentSchema = new mongoose.Schema({
-  title:{
+  title: {
     type: String,
     default: "New Document"
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId, 
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  collaborators: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    default: []
   },
   content: {
     type: String,

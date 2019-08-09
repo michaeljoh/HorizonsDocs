@@ -12,11 +12,11 @@ module.exports = function (passport) {
     function (req, res, next) {
       passport.authenticate('local', function (err, user, info) {
         if (err) { return next(err); }
-        if (!user) { return res.json({ redirect: '/login' }); }
+        if (!user) { return res.json({ success: false }); }
 
         req.logIn(user, function (err) {
           if (err) { return next(err); }
-          return res.json({ redirect: '/portal' });
+          return res.json({ success: true });
         });
       })(req, res, next)
     }
@@ -64,7 +64,8 @@ module.exports = function (passport) {
 
   router.get('/logout', function (req, res) {
     req.logout();
-    res.redirect('/login');
+    console.log("Logging out...")
+    res.json({success: true, redirect: "/login"});
   });
 
   return router;

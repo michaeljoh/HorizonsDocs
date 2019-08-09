@@ -272,8 +272,8 @@ class Document extends React.Component {
       return <Redirect to={this.state.redirectTo} />;
     return (
       <div className="documentContainer">
-        <h1 className="heading">Document Name</h1>
         <div className="documentBox">
+        <h1 className="heading">Document Name</h1>
           <div className="documentEditor">
             <div className="buttons">
               <InlineButtons
