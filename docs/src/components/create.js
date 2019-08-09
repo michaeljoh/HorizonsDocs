@@ -13,9 +13,15 @@ class CreateForm extends React.Component {
     this.setState({ value: event.target.value });
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
-    this.props.history.push(`/${this.state.value}`);
+
+    if (this.state.value !== "") {
+      let response = await this.props.clickHandler(this.state.value);
+      if (response.success) {
+        this.props.history.push(`/document/${response.id}`)
+      }
+    }
   }
 
   render() {

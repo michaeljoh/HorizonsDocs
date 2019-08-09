@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./document.css"
 import { Editor, EditorState, Modifier, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
-import { BrowserRouter as Router, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Link } from "react-router-dom";
 
 
 const COLOURS = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"]
@@ -131,24 +131,25 @@ class Document extends React.Component {
     // Fetch document
     async componentDidMount() {
         //TEST document
-        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + '5d4c7866cb887c1198097a99', {
+        const data = await fetch(process.env.REACT_APP_CONNECTION_URL + '/document/' + this.props.match.params.id, {
             method: "GET",
             credentials: 'include',
         });
 
         const responseJSON = await data.json();
 
-        console.log("Got document: ", responseJSON)
-
         if (responseJSON.notAuthenticated) {
             this.setState({ authenticated: false })
         } else if (responseJSON.redirect) {
-            // this.setState({
-            //     redirect: true,
-            //     redirectTo: responseJSON.redirect
-            // });
+            this.setState({
+                redirect: true,
+                redirectTo: responseJSON.redirect
+            });
         } else {
-            // this.setState({ editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(responseJSON.content))) });
+            if (responseJSON.content)
+                this.setState({ editorState: EditorState.createWithContent(convertFromRaw(JSON.parse(responseJSON.content))) });
+            else
+                this.setState({ editorState: EditorState.createEmpty() });
         }
     }
 
@@ -208,10 +209,8 @@ class Document extends React.Component {
 
     async saveDoc() {
         const contentState = this.state.editorState.getCurrentContent();
-        const toSave = convertToRaw(contentState);
-        console.log(toSave)
-
-        const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/document/123", {
+        const toSave = JSON.stringify(convertToRaw(contentState));
+        const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/document", {
             method: "POST",
             credentials: 'include',
             redirect: "follow",
@@ -219,6 +218,7 @@ class Document extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                id: this.props.match.params.id,
                 content: toSave
             })
         });
@@ -255,6 +255,7 @@ class Document extends React.Component {
                         onChange={this.onChange}
                     />
                     <button onClick={this.saveDoc.bind(this)}>Save</button>
+                    <Link to="/portal">Back</Link>
                 </div>
             </div>
         );
