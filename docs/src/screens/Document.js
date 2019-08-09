@@ -3,6 +3,11 @@ import "./document.css"
 import { Editor, EditorState, Modifier, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { BrowserRouter as Router, Redirect, Link } from "react-router-dom";
 
+import openSocket from 'socket.io-client';
+import socketClient from '../socketClient'
+const socket = openSocket(process.env.REACT_APP_CONNECTION_URL);
+socketClient(socket);
+
 
 const COLOURS = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"]
 const INLINE_STYLES = ["Bold", "Italic", "Underline"];
@@ -151,6 +156,8 @@ class Document extends React.Component {
             else
                 this.setState({ editorState: EditorState.createEmpty() });
         }
+
+
     }
 
     // Style click handler
