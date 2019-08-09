@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "../styles/register.css";
 
 class Login extends Component {
     constructor(props) {
