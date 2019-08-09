@@ -1,5 +1,8 @@
-  import React from "react";
-import  CreateForm  from "../components/create";
+
+import React from "react";
+import CreateForm from "../components/create";
+import "../styles/portal.css";
+
 import { Link, BrowserRouter as Router } from "react-router-dom";
 
 function Portal() {
@@ -34,8 +37,8 @@ function Portal() {
           <CreateForm label="Shared Link: " buttonLabel="Add" />
         </div>
       </div>
-    </Router>
-  );
+    );
+  }
 }
 
-export default Portal;
+export default withRouter(Portal);
