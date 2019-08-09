@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 
 class Login extends Component {
     constructor(props) {
@@ -7,6 +8,7 @@ class Login extends Component {
         this.state = {
             email: null,
             password: null,
+            loggedIn: false
         };
     }
 
@@ -36,7 +38,9 @@ class Login extends Component {
             body: JSON.stringify(data)
         })
 
-        console.log("FETCHED!!", await response.json())
+        const responseJSON = await response.json();
+        if (responseJSON.success)
+            this.setState({ loggedIn: true })
     };
 
     handleChange = e => {
@@ -46,6 +50,8 @@ class Login extends Component {
     };
 
     render() {
+        if (this.state.loggedIn)
+            return <Redirect to="/portal" />
         return (
             <div className="wrapper">
                 <div className="form-wrapper">

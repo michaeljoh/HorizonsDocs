@@ -16,7 +16,7 @@ module.exports = function (passport) {
 
         req.logIn(user, function (err) {
           if (err) { return next(err); }
-          return res.json({ success: true, redirect: '/portal' });
+          return res.json({ success: true });
         });
       })(req, res, next)
     }
