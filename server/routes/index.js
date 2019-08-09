@@ -56,7 +56,7 @@ router.post("/newDoc", async function (req, res) {
 // Save document
 router.post("/document", async function (req, res) {
   const doc = await Document.findById(req.body.id);
-
+  console.log("SAVING DOC")
   if (!doc) {
     let newDoc = {
       owner: req.user._id,

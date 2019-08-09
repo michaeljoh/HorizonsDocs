@@ -39,9 +39,8 @@ const documentSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  editorState: {
-    type: Object,
-    required: true
+  content: {
+    type: String,
   },
   createdAt: {
     type: Date,
