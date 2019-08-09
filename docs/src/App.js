@@ -9,7 +9,7 @@ class App extends Component {
   }
 
   render() {
-    return (  
+    return (
       <Router>
         <Switch>
           <Route path="/signup" render={() => <Signup></Signup>}></Route>

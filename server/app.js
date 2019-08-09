@@ -2,7 +2,6 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -16,7 +15,10 @@ const cors = require("cors")
 
 var app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 // view engine setup
 app.use(logger('dev'));
