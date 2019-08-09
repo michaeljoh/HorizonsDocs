@@ -17,8 +17,6 @@ class Login extends Component {
 
         console.log(`
         --Logging in--
-        First Name: ${this.state.firstName}
-        Last Name: ${this.state.lastName}
         Email: ${this.state.email}
         Password: ${this.state.password}
       `);
@@ -27,16 +25,19 @@ class Login extends Component {
             password: this.state.password,
         }
 
-        const response = await fetch(process.env.CONNECTION_URL + "/login", {
+        // HANDLE LOGIN FETCH
+        console.log(process.env)
+        const response = await fetch(process.env.REACT_APP_CONNECTION_URL + "/login", {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
+            redirect: "follow",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
         })
 
-        console.log("FETCHED!!", await response.text())
+        console.log("FETCHED!!", await response.json())
     };
 
     handleChange = e => {

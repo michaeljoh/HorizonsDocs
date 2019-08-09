@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import "../styles/document.css";
-import { Editor, EditorState, Modifier, RichUtils } from "draft-js";
-import { BrowserRouter as Router, Redirect } from "react-router-dom";
+import {
+  Editor,
+  EditorState,
+  Modifier,
+  RichUtils,
+  convertFromRaw,
+  convertToRaw
+} from "draft-js";
+import { BrowserRouter as Router, Redirect, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -12,12 +19,18 @@ import {
   faListOl
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faUnderline, faBold, faItalic,faListUl,faListOl);
+library.add(faUnderline, faBold, faItalic, faListUl, faListOl);
 
 const INLINE_STYLES = [
   { label: <FontAwesomeIcon icon="bold" />, style: "Bold" },
   { label: <FontAwesomeIcon icon="italic" />, style: "Italic" },
   { label: <FontAwesomeIcon icon="underline" />, style: "Underline" }
+];
+const BLOCK_TYPES = [
+  { label: <FontAwesomeIcon icon="list-ul" />, style: "unordered-list-item" },
+  { label: <FontAwesomeIcon icon="list-ol" />, style: "ordered-list-item" },
+  { label: "Code Block", style: "code-block" },
+  { label: "Blockquote", style: "blockquote" }
 ];
 const COLOURS = [
   { label: "RED", style: "Red" },
@@ -26,12 +39,6 @@ const COLOURS = [
   { label: "GREEN", style: "Green" },
   { label: "BLUE", style: "Blue" },
   { label: "PURPLE", style: "Purple" }
-];
-const BLOCK_TYPES = [
-  { label: <FontAwesomeIcon icon="list-ul" />, style: "unordered-list-item" },
-  { label: <FontAwesomeIcon icon="list-ol" />, style: "ordered-list-item" },
-  { label: "Code Block", style: "code-block" },
-  { label: "Blockquote", style: "blockquote" }
 ];
 
 // Stylemap
@@ -68,7 +75,11 @@ const StyleButton = props => {
   }
 
   return (
-    <button style={{color: props.style, borderRadius: 5}} className={className} onMouseDown={onToggle}>
+    <button
+      style={{ color: props.style, borderRadius: 5 }}
+      className={className}
+      onMouseDown={onToggle}
+    >
       {props.label}
     </button>
   );
@@ -77,7 +88,7 @@ const StyleButton = props => {
 const InlineButtons = props => {
   const currentStyle = props.editorState.getCurrentInlineStyle();
   return (
-    <div>
+    <div className="editor-controls">
       {INLINE_STYLES.map(type => (
         <StyleButton
           key={type.style}
@@ -100,7 +111,7 @@ const BlockButtons = props => {
     .getType();
 
   return (
-    <div>
+    <div className="RichEditor-controls">
       {BLOCK_TYPES.map(type => (
         <StyleButton
           key={type.label}
@@ -135,19 +146,49 @@ class Document extends React.Component {
     super(props);
     this.state = {
       editorState: EditorState.createEmpty(),
-      authenticated: true
+      authenticated: true,
+      redirect: false,
+      redirectTo: null
     };
     this.focus = () => this.refs.editor.focus();
-    this.onChange = editorState => this.setState({ editorState });
+    this.onChange = editorState => {
+      console.log(editorState);
+      this.setState({ editorState });
+    };
   }
 
-  // CHANGE TO FETCH
-  //   componentDidMount() {
-  //     const response = { redirect: "/login" };
-  //     if (response.redirect) {
-  //       this.setState({ authenticated: false });
-  //     }
-  //   }
+  // Fetch document
+  async componentDidMount() {
+    //TEST document
+    const data = await fetch(
+      process.env.REACT_APP_CONNECTION_URL +
+        "/document/" +
+        this.props.match.params.id,
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+    const responseJSON = await data.json();
+
+    if (responseJSON.notAuthenticated) {
+      this.setState({ authenticated: false });
+    } else if (responseJSON.redirect) {
+      this.setState({
+        redirect: true,
+        redirectTo: responseJSON.redirect
+      });
+    } else {
+      if (responseJSON.content)
+        this.setState({
+          editorState: EditorState.createWithContent(
+            convertFromRaw(JSON.parse(responseJSON.content))
+          )
+        });
+      else this.setState({ editorState: EditorState.createEmpty() });
+    }
+  }
 
   // Style click handler
   changeStyleClick(style) {
@@ -202,13 +243,36 @@ class Document extends React.Component {
     return "not-handled";
   }
 
+  async saveDoc() {
+    const contentState = this.state.editorState.getCurrentContent();
+    const toSave = JSON.stringify(convertToRaw(contentState));
+    const response = await fetch(
+      process.env.REACT_APP_CONNECTION_URL + "/document",
+      {
+        method: "POST",
+        credentials: "include",
+        redirect: "follow",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          id: this.props.match.params.id,
+          content: toSave
+        })
+      }
+    );
+
+    console.log("DOC SAVED? ", await response.json());
+  }
+
   render() {
     if (!this.state.authenticated) {
       return <Redirect to="/login" />;
-    }
+    } else if (this.state.redirect)
+      return <Redirect to={this.state.redirectTo} />;
     return (
       <div className="documentContainer">
-        <h1 className="heading">MY DOCUMENT</h1>
+        <h1 className="heading">Document Name</h1>
         <div className="documentBox">
           <div className="documentEditor">
             <div className="buttons">
@@ -238,6 +302,10 @@ class Document extends React.Component {
               onChange={this.onChange}
             />
           </div>
+          <button onClick={this.saveDoc.bind(this)}>
+            Save
+          </button>
+          <Link to="/portal">Back</Link>
         </div>
       </div>
     );

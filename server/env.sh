@@ -1,2 +1,2 @@
-export MONGODB_URI='mongodb+srv://SirRendore:pa55word@horizonscluster-a9rxt.mongodb.net/HorizonsDocs?retryWrites=true&w=majority'
-export SECRET="keyboardcat"
+export MONGODB_URI='mongodb+srv://michaeljoh99:Gokorea99!@cluster0-aqm3d.mongodb.net/HorizonsDocs?retryWrites=true&w=majority'
+export SECRET="Hello"

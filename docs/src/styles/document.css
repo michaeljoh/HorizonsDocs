@@ -33,15 +33,9 @@
 }
 
 .heading {
-    color: black;
-    font-weight: 50;
+  color: black;
+  font-weight: 50;
 }
-
-/* :hover {
-    color: #519e8a;
-    background-color: #fff;
-    border: 2px solid #519e8a;
-} */
 
 .editor {
   width: auto;
