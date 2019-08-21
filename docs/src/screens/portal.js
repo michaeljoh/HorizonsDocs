@@ -48,11 +48,11 @@ class Portal extends React.Component {
         <div className="form-larger">
           <h1> Welcome to the Portal </h1>
           <div> Create a document </div>
-          <CreateForm
-            clickHandler={this.createNewDoc}
-            label="Create Document: "
-            buttonLabel="Create"
-          />
+            <CreateForm
+              clickHandler={this.createNewDoc}
+              label="Create Document: "
+              buttonLabel="Create"
+            />
           <div> My Documents </div>
           <ul>
             {!this.state.docs

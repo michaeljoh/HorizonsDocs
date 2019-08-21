@@ -1,5 +1,6 @@
 import React from "react";
 import { withRouter, Link } from "react-router-dom";
+import "../styles/portal.css";
 
 class CreateForm extends React.Component {
   constructor(props) {
@@ -26,22 +27,24 @@ class CreateForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} className="inputLine">
         <label>
           {this.props.label}
           <input
+            className="inputField"
             type="text"
             value={this.state.value}
             onChange={this.handleChange}
           />
         </label>
-        <Link
+        <button
+          className="createButton"
           onClick={this.handleSubmit}
           value={this.props.buttonLabel}
           to={`/${this.state.value}`}
         >
           Create
-        </Link>
+        </button>
       </form>
     );
   }
